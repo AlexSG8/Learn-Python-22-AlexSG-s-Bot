@@ -1,7 +1,9 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import settings
-from random import randint
+from random import randint, choice
+from glob import glob
+from emoji import emojize
 
 logging.basicConfig(filename='bot.log',
                     level=logging.INFO)
@@ -9,6 +11,11 @@ PROXY = {'proxy_url': settings.PROXY_URL,
          'urllib3_proxy_kwargs': {'username': settings.PROXY_USERNAME,
                                   'password': settings.PROXY_PASSWORD}}
 
+
+def get_smile():
+    smile = choice(settings.USER_EMOJI)
+    smile = emojize(smile, use_aliases=True)
+    return smile
 
 def greet_user(update, context):
     """
@@ -20,7 +27,7 @@ def greet_user(update, context):
     """
     print("Вызван /start")
 
-    update.message.reply_text('Привет, пользователь! Ты вызвал команду /start')
+    update.message.reply_text(f'Привет, пользователь {get_smile()}!')
 
 
 def talk_to_me(update, context):
@@ -31,12 +38,20 @@ def talk_to_me(update, context):
     :param context:
     :return:
     """
+
     user_text = update.message.text
+    username = update.effective_user.first_name
     print(user_text)
-    update.message.reply_text(user_text)
+    update.message.reply_text(f"Здравствуй, {username} {get_smile()}! Ты написал: {user_text}")
 
 
 def play_random_numbers(user_number):
+    """
+    Игра в числа
+
+    :param user_number:
+    :return:
+    """
     bot_number = randint(user_number - 10, user_number + 10)
 
     if bot_number == user_number:
@@ -50,7 +65,13 @@ def play_random_numbers(user_number):
 
 
 def guess_number(update, context):
+    """
+    Обработка /guess для игры в числа
 
+    :param update:
+    :param context:
+    :return:
+    """
     if context.args:
         try:
             user_number = int(context.args[0])
@@ -63,12 +84,27 @@ def guess_number(update, context):
     update.message.reply_text(message)
 
 
+def send_cat_picture(update, context):
+    """
+    Отправка случайной картинки по команде /cat
+
+    :param update:
+    :param context:
+    :return:
+    """
+    cat_photos_list = glob("images/*cat*.jp*g")
+    cat_pic_filename = choice(cat_photos_list)
+    chat_id = update.effective_chat.id
+    context.bot.send_photo(chat_id=chat_id, photo=open(cat_pic_filename, "rb"))
+
+
 def main():
     mybot = Updater(settings.API_KEY, use_context=True, request_kwargs=PROXY)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
     dp.add_handler(CommandHandler("guess", guess_number))
+    dp.add_handler(CommandHandler("cat", send_cat_picture))
 
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
