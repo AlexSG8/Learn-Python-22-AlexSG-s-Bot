@@ -12,10 +12,12 @@ PROXY = {'proxy_url': settings.PROXY_URL,
                                   'password': settings.PROXY_PASSWORD}}
 
 
-def get_smile():
-    smile = choice(settings.USER_EMOJI)
-    smile = emojize(smile, use_aliases=True)
-    return smile
+def get_smile(user_data):
+    if 'emoji' not in user_data:
+        smile = choice(settings.USER_EMOJI)
+        return emojize(smile, use_aliases=True)
+    return user_data['emoji']
+
 
 def greet_user(update, context):
     """
@@ -26,8 +28,8 @@ def greet_user(update, context):
     :return:
     """
     print("Вызван /start")
-
-    update.message.reply_text(f'Привет, пользователь {get_smile()}!')
+    context.user_data['emoji'] = get_smile(context.user_data)
+    update.message.reply_text(f"Привет, пользователь {context.user_data['emoji']}!")
 
 
 def talk_to_me(update, context):
@@ -42,7 +44,8 @@ def talk_to_me(update, context):
     user_text = update.message.text
     username = update.effective_user.first_name
     print(user_text)
-    update.message.reply_text(f"Здравствуй, {username} {get_smile()}! Ты написал: {user_text}")
+    context.user_data['emoji'] = get_smile(context.user_data)
+    update.message.reply_text(f"Здравствуй, {username} {context.user_data['emoji']}! Ты написал: {user_text}")
 
 
 def play_random_numbers(user_number):
