@@ -9,11 +9,26 @@ PROXY = {'proxy_url': settings.PROXY_URL,
 
 
 def greet_user(update, context):
+    """
+    Ответ бота на вызов '/start'
+
+    :param update:
+    :param context:
+    :return:
+    """
     print("Вызван /start")
+
     update.message.reply_text('Привет, пользователь! Ты вызвал команду /start')
 
 
 def talk_to_me(update, context):
+    """
+    Эхо
+
+    :param update:
+    :param context:
+    :return:
+    """
     user_text = update.message.text
     print(user_text)
     update.message.reply_text(user_text)
