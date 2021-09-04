@@ -68,6 +68,13 @@ def send_cat_picture(update, context):
 
 
 def user_coordinates(update, context):
+    """
+    Возврат координат геопозиции
+
+    :param update:
+    :param context:
+    :return:
+    """
     coords = update.message.location
     context.user_data['emoji'] = get_smile(context.user_data)
     update.message.reply_text(f"Ваши координаты:\n широта: {coords['latitude']},"
