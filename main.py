@@ -1,8 +1,8 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from handlers import (greet_user, guess_number, talk_to_me,
-                      send_cat_picture, user_coordinates)
-
+                      send_cat_picture, user_coordinates,
+                      check_user_photo)
 
 import settings
 
@@ -22,9 +22,9 @@ def main():
     dp.add_handler(CommandHandler("cat", send_cat_picture))
 
     dp.add_handler(MessageHandler(Filters.regex('^(Прислать котика)$'), send_cat_picture))
-#    dp.add_handler(MessageHandler(Filters.regex('^(Играть в числа)$'), guess_number))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
     dp.add_handler(MessageHandler(Filters.location, user_coordinates))
+    dp.add_handler(MessageHandler(Filters.photo, check_user_photo))
 
     logging.info('Бот стартовал')
     mybot.start_polling()

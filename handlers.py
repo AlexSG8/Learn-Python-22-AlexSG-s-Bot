@@ -1,6 +1,8 @@
+# import os
 from glob import glob
 from random import choice
-from utils import get_smile, main_keyboard, play_random_numbers
+import utils
+from utils import get_smile, main_keyboard, play_random_numbers, is_cat
 
 
 def greet_user(update, context):
@@ -80,3 +82,18 @@ def user_coordinates(update, context):
     update.message.reply_text(f"Ваши координаты:\n широта: {coords['latitude']},"
                               f"\n долгота: {coords['longitude']} \n{context.user_data['emoji']}",
                               reply_markup=main_keyboard())
+
+def check_user_photo(update, context):
+    """
+    Загрузка файла пользователя
+
+    :param update:
+    :param context:
+    :return:
+    """
+
+    update.message.reply_text("Обрабатываю фото")
+    photo_file = context.bot.getFile(update.message.photo[-1].file_id)
+    cat = utils.is_cat(photo_file['file_path'])
+
+    update.message.reply_text("Это кот" if cat else "Это не кот")
