@@ -2,7 +2,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from handlers import (greet_user, guess_number, talk_to_me,
                       send_cat_picture, user_coordinates,
-                      check_user_photo)
+                      check_user_photo, planet_command)
 
 import settings
 
@@ -20,6 +20,7 @@ def main():
     dp.add_handler(CommandHandler("start", greet_user))
     dp.add_handler(CommandHandler("guess", guess_number))
     dp.add_handler(CommandHandler("cat", send_cat_picture))
+    dp.add_handler(CommandHandler("planet", planet_command))
 
     dp.add_handler(MessageHandler(Filters.regex('^(Прислать котика)$'), send_cat_picture))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))

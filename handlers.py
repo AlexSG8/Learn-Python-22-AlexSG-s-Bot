@@ -3,6 +3,8 @@ from glob import glob
 from random import choice
 import utils
 from utils import get_smile, main_keyboard, play_random_numbers
+import ephem
+import datetime
 
 
 def greet_user(update, context):
@@ -106,3 +108,20 @@ def check_user_photo(update, context):
     else:
         os.remove(filename)
         update.message.reply_text("Котик не обнаружен!")
+
+
+def planet_command(update, context):
+    _planet = ''
+    today = datetime.datetime.now().strftime("%Y/%m/%d")
+    # planet = context.args[0]
+    planet = update.message.text.split()[-1].capitalize()
+    if planet == 'Mars':
+        _planet = ephem.Mars(today)
+    elif planet == 'Jupiter':
+        _planet = ephem.Jupiter(today)
+    elif planet == 'Saturn':
+        _planet = ephem.Saturn(today)
+    elif planet == 'Moon':
+        _planet = ephem.Moon(today)
+
+    update.message.reply_text(ephem.constellation(_planet))
